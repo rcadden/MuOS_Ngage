@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run ShellCheck (POSIX sh mode)
+      - name: Run ShellCheck (POSIX sh mode - MustardOS upstream rules)
         run: |
-          shellcheck -s sh src/muos-internal/script/launch/ext-eka2l1.sh
-          shellcheck -s sh execution/register-eka2l1-core.sh
-          shellcheck -s sh execution/package-muxzip.sh
+          shellcheck -s sh -e SC1091 src/muos-internal/script/launch/ext-eka2l1.sh
+          shellcheck -s sh -e SC1091 execution/register-eka2l1-core.sh
+          shellcheck -s sh -e SC1091 execution/package-muxzip.sh
 
       - name: Validate core.patch.json schema
         run: |

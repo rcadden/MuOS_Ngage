@@ -39,3 +39,4 @@
 ## Lessons Learned
 - *2026-10-27 (Architecture)*: `MustardOS/extra` is exclusively for Libretro `.so` cores built via MURCB. Standalone external emulators live in `MustardOS/internal` under `share/emulator/<name>` with a launcher in `script/launch/ext-<name>.sh` and a system entry in `share/info/manifest/core.json`.
 - *2026-10-27 (Manifest Override)*: A user-storage `MUOS/info/manifest/core.json` completely replaces `/opt/muos/share/info/manifest/core.json`. When building `.muxzip` packages for testing, patch the existing `core.json` via `jq` rather than overwriting it with a stale snapshot.
+- *2026-10-27 (ShellCheck CI)*: Upstream `MustardOS/internal` `.github/scripts/posix-check.sh` ignores `SC1091` (sourcing `/opt/muos/script/var/*.sh` which only exists on device) and fails only on POSIX `SC3xxx` bashisms or `error` severity. Always pass `-e SC1091` when running standalone `shellcheck -s sh`.
