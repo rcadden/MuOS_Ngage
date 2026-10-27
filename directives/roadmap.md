@@ -3,8 +3,8 @@
 ## Sprint 1: Foundation & Cloud Build Pipeline
 - [x] **Architectural research on `AveyondFly/EKA2L1` and `MustardOS/internal`**
 - [x] **Initialize `MuOS_Ngage` repository, starter launch scripts, and GitHub Actions CI workflow**
-- [ ] **Connect repository to GitHub and verify first cloud `aarch64` build of `eka2l1_sdl2`**
-- [ ] **Download and inspect the generated `MuOS-Ngage.muxzip` build artifact**
+- [x] **Connect repository to GitHub and verify first cloud `aarch64` build of `eka2l1_sdl2`**
+- [x] **Download and inspect the generated `MuOS-Ngage.muxzip` build artifact**
 
 ## Sprint 2: RG35XX H Hardware Verification & Tuning
 - [ ] **Install `MuOS-Ngage.muxzip` on the RG35XX H via muOS Archive Manager**

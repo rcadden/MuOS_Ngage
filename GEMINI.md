@@ -4,7 +4,7 @@
 **MuOS Ngage**: Port `AveyondFly/EKA2L1` (SDL2/GLESv2 `aarch64` Symbian OS & Nokia N-Gage emulator) into **MustardOS (muOS)** as a native standalone external emulator, delivering both an immediately installable `.muxzip` archive for RG35XX H testing and upstream Pull Requests to `MustardOS/internal` and `MustardOS/mustardos.github.io`.
 
 ## Status
-- **Phase**: Initialized (Sprint 1: Foundation & CI Build Pipeline)
+- **Phase**: Sprint 2 (RG35XX H Hardware Verification & Tuning)
 - **Active Branch**: `dev`
 
 ## Tech Stack
