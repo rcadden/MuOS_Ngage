@@ -1,0 +1,46 @@
+# EKA2L1 (Nokia N-Gage / Symbian OS) Controller Profile for MustardOS (RG35XX H)
+# Maps physical gamepad controls to AveyondFly/EKA2L1 SDL2 keyboard bindings:
+#   Arrows   = D-Pad
+#   Enter    = OK / Select (Device 3)
+#   5 / 7    = Primary N-Gage Action Keys (Numpad 5 & 7)
+#   F1 / F2  = Left Softkey / Right Softkey
+#   F3 / F4  = Green (Call) / Red (End)
+#   R        = Rotate screen 90 deg + remap D-Pad
+#   F5       = EKA2L1 OSD Menu
+#   Backspace= Clear (C)
+#   Escape   = End / Exit
+
+back = f3
+start = f4
+guide = f5
+
+up = up
+down = down
+left = left
+right = right
+
+# Primary N-Gage action keys (5 is Primary Action, 7 is Secondary Action, Enter is Center Select)
+a = return
+b = 5
+x = 7
+y = backspace
+
+# Softkeys & Rotation / OSD
+l1 = f1
+r1 = f2
+l2 = r
+r2 = f5
+
+# Left stick mirrors D-Pad
+left_analog_up = up
+left_analog_down = down
+left_analog_left = left
+left_analog_right = right
+l3 = 0
+
+# Right stick maps extra N-Gage number pad keys (1, 3, *, #)
+right_analog_up = 1
+right_analog_down = 3
+right_analog_left = equal
+right_analog_right = minus
+r3 = 9

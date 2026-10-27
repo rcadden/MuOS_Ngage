@@ -1,0 +1,9 @@
+# Build outputs & packaged archives
+dist/
+build-aarch64/
+EKA2L1-src/
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+*.swp

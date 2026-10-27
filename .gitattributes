@@ -1,0 +1,9 @@
+# Text files default to LF to prevent CRLF issues in BusyBox /bin/sh on muOS
+* text=auto eol=lf
+*.sh text eol=lf
+*.gptk text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.cmake text eol=lf
+*.md text eol=lf

@@ -1,0 +1,78 @@
+name: Build MuOS-Ngage (aarch64) & Lint Scripts
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+jobs:
+  shellcheck:
+    name: MustardOS POSIX ShellCheck & JSON Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run ShellCheck (POSIX sh mode)
+        run: |
+          shellcheck -s sh src/muos-internal/script/launch/ext-eka2l1.sh
+          shellcheck -s sh execution/register-eka2l1-core.sh
+          shellcheck -s sh execution/package-muxzip.sh
+
+      - name: Validate core.patch.json schema
+        run: |
+          jq empty src/muos-internal/share/info/manifest/core.patch.json
+
+  build-aarch64:
+    name: Cross-Compile EKA2L1 (aarch64 Cortex-A53) & Package .muxzip
+    runs-on: ubuntu-22.04
+    needs: shellcheck
+    steps:
+      - name: Checkout MuOS_Ngage
+        uses: actions/checkout@v4
+
+      - name: Enable arm64 Multiarch & Install Cross-Compile Dependencies
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo sed -i 's/^deb /deb [arch=amd64] /g' /etc/apt/sources.list
+          cat << 'EOF' | sudo tee -a /etc/apt/sources.list
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted universe multiverse
+          EOF
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake ninja-build pkg-config git zip jq \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            libsdl2-dev:arm64 libsdl2-ttf-dev:arm64 \
+            libgles2-mesa-dev:arm64 libegl1-mesa-dev:arm64 \
+            libasound2-dev:arm64 libpulse-dev:arm64 \
+            libfreetype-dev:arm64 zlib1g-dev:arm64
+
+      - name: Clone AveyondFly/EKA2L1 (with submodules)
+        run: |
+          git clone --recursive --depth 1 https://github.com/AveyondFly/EKA2L1.git EKA2L1-src
+
+      - name: Configure & Cross-Compile eka2l1_sdl2 (aarch64)
+        run: |
+          cmake -B build-aarch64 -S EKA2L1-src -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="${GITHUB_WORKSPACE}/execution/toolchain-aarch64-muos.cmake" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DEKA2L1_BUILD_TOOLS=OFF \
+            -DEKA2L1_BUILD_TESTS=OFF \
+            -DEKA2L1_ENABLE_SCRIPTING_ABILITY=OFF \
+            -DENABLE_UNEXPECTED_EXCEPTION_HANDLER=OFF
+          cmake --build build-aarch64 --target eka2l1_sdl2 -j$(nproc)
+          aarch64-linux-gnu-strip build-aarch64/bin/eka2l1_sdl2
+
+      - name: Package MuOS-Ngage.muxzip
+        run: |
+          sh execution/package-muxzip.sh build-aarch64/bin
+
+      - name: Upload MuOS-Ngage.muxzip Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MuOS-Ngage-aarch64-muxzip
+          path: dist/MuOS-Ngage.muxzip
+          retention-days: 30

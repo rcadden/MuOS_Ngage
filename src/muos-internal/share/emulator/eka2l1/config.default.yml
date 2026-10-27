@@ -1,0 +1,11 @@
+# Default EKA2L1 Configuration for MustardOS (RG35XX H - 640x480)
+storage: /run/muos/storage/save/eka2l1
+device: 0
+language: -1
+enable-gdb-stub: false
+gdb-port: 24689
+log-filter: "*:info"
+enable-btrace: false
+integer-scaling: false
+ui-scale: 1.0
+audio-master-volume: 100

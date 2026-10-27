@@ -1,0 +1,37 @@
+{
+  "Nokia N-Gage": {
+    "name": "Nokia N-Gage",
+    "namespace": "Mobile",
+    "catalogue": "Nokia N-Gage",
+    "lookup": 0,
+    "default": "eka2l1 - standalone",
+    "runtime": "external",
+    "governor": "performance",
+    "friendly": [
+      "ngage",
+      "nokiangage",
+      "n-gage",
+      "symbian",
+      "s60",
+      "eka2l1"
+    ],
+    "bios": [
+      {
+        "file": "eka2l1/SYM.ROM",
+        "hash": ""
+      }
+    ],
+    "external": {
+      "eka2l1 - standalone": {
+        "name": "EKA2L1 - Standalone",
+        "core": "ext-eka2l1",
+        "launcher": "eka2l1.sh",
+        "require": {
+          "arch": [
+            "aarch64"
+          ]
+        }
+      }
+    }
+  }
+}
