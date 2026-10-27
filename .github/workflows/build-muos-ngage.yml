@@ -43,7 +43,7 @@ jobs:
           EOF
           sudo apt-get update
           sudo apt-get install -y \
-            cmake ninja-build pkg-config git zip jq \
+            cmake ninja-build pkg-config ccache git zip jq \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             libsdl2-dev:arm64 libsdl2-ttf-dev:arm64 \
             libgles2-mesa-dev:arm64 libegl1-mesa-dev:arm64 \
@@ -51,9 +51,56 @@ jobs:
             libasound2-dev:arm64 libpulse-dev:arm64 \
             libfreetype-dev:arm64 zlib1g-dev:arm64
 
+      - name: Cache ccache for EKA2L1 C++ compilation
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ccache-eka2l1-aarch64-${{ github.run_id }}
+          restore-keys: |
+            ccache-eka2l1-aarch64-
+
       - name: Clone AveyondFly/EKA2L1 (with submodules)
         run: |
           git clone --recursive --depth 1 https://github.com/AveyondFly/EKA2L1.git EKA2L1-src
+
+      - name: Cross-Compile Static Minimal FFmpeg 4.2.3 for aarch64-linux-gnu
+        uses: actions/cache@v4
+        id: ffmpeg-cache
+        with:
+          path: EKA2L1-src/src/external/ffmpeg/linux/aarch64
+          key: ffmpeg-aarch64-static-v1
+
+      - name: Build FFmpeg Static Libraries if not cached
+        if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -sL https://ffmpeg.org/releases/ffmpeg-4.2.3.tar.xz | tar -xJ
+          cd ffmpeg-4.2.3
+          ./configure \
+            --prefix="${GITHUB_WORKSPACE}/EKA2L1-src/src/external/ffmpeg/linux/aarch64" \
+            --enable-cross-compile \
+            --cross-prefix=aarch64-linux-gnu- \
+            --arch=aarch64 \
+            --target-os=linux \
+            --disable-shared --enable-static --enable-pic \
+            --disable-everything --disable-autodetect \
+            --disable-avdevice --disable-filters --disable-programs \
+            --disable-network --disable-avfilter --disable-postproc \
+            --disable-encoders --disable-doc \
+            --enable-zlib \
+            --enable-decoder=h264,mpeg4,h263,h263p,mpeg2video,mjpeg,mjpegb \
+            --enable-decoder=aac,aac_latm,wavpack,amrnb,amrwb,amr,mp3,pcm_s16le,pcm_s8 \
+            --enable-demuxer=h264,m4v,mp3,mpegvideo,mpegps,mjpeg,mov,avi,aac,amr,amrnb,amrwb,pcm_s16le,pcm_s8,wav \
+            --enable-encoder=pcm_s16le \
+            --enable-muxer=amr,avi,mp3,wav,pcm_s16le,pcm_s8,ogg \
+            --enable-parser=h264,mpeg4video,mpegvideo,aac,aac_latm,mpegaudio \
+            --enable-protocol=file \
+            --extra-cflags="-D__STDC_CONSTANT_MACROS -O3 -march=armv8-a+crc -mtune=cortex-a53"
+          make -j$(nproc)
+          make install
+
+      - name: Patch EKA2L1 FFmpeg CMakeLists to link aarch64 static archives
+        run: |
+          sed -i 's|linux/x86_64/lib/|linux/aarch64/lib/|g' EKA2L1-src/src/external/ffmpeg/CMakeLists.txt
 
       - name: Configure & Cross-Compile eka2l1_sdl2 (aarch64)
         run: |
