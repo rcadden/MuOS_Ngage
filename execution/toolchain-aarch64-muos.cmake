@@ -13,7 +13,11 @@ set(CMAKE_STRIP "${CROSS_PREFIX}-strip" CACHE FILEPATH "Strip")
 set(CMAKE_C_FLAGS_INIT "-march=armv8-a+crc -mtune=cortex-a53")
 set(CMAKE_CXX_FLAGS_INIT "-march=armv8-a+crc -mtune=cortex-a53")
 
-set(CMAKE_FIND_ROOT_PATH "/usr/aarch64-linux-gnu" "/usr/lib/aarch64-linux-gnu")
+# Include "/usr" so Ubuntu multiarch headers in /usr/include/SDL2 and /usr/include/aarch64-linux-gnu
+# are discovered alongside /usr/lib/aarch64-linux-gnu libraries
+set(CMAKE_FIND_ROOT_PATH "/usr/aarch64-linux-gnu" "/usr/lib/aarch64-linux-gnu" "/usr")
+set(CMAKE_LIBRARY_ARCHITECTURE "aarch64-linux-gnu")
+
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
